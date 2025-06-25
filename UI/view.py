@@ -1,50 +1,57 @@
 import flet as ft
 
-
 class View(ft.UserControl):
     def __init__(self, page: ft.Page):
         super().__init__()
-        # page stuff
         self._page = page
-        self._page.title = "TdP Lab 13 - simulazione esame"
+        self._page.title = "Simulazione Gara"
         self._page.horizontal_alignment = 'CENTER'
         self._page.theme_mode = ft.ThemeMode.LIGHT
         self._page.bgcolor = "#ebf4f4"
         self._page.window_height = 800
         page.window_center()
-        # controller (it is not initialized. Must be initialized in the main, after the controller is created)
+
         self._controller = None
-        # graphical elements
-        self._title = None
-        self._txt_name = None
-        self._txt_result = None
 
     def load_interface(self):
-        # title
-        self._title = ft.Text("TdP Lab 13 - simulazione esame", color="blue", size=24)
+        self._title = ft.Text("Simulazione Gara", color="blue", size=24)
         self._page.controls.append(self._title)
 
-        self._ddAnno = ft.Dropdown(label="Anno")
+        # Dropdown Anno + Bottone Seleziona stagione
+        self._ddAnno = ft.Dropdown(label="Anno", width=200)
         self._controller.fillDDYear()
-        self._btnCreaGrafo = ft.ElevatedButton(text="Vittorie Piloti", on_click=self._controller.handleCreaGrafo)
 
-        cont = ft.Container(self._ddAnno, width=250, alignment=ft.alignment.top_left)
-        row1 = ft.Row([cont, self._btnCreaGrafo], alignment=ft.MainAxisAlignment.CENTER,
-                      vertical_alignment=ft.CrossAxisAlignment.END)
+        self._btnSelezionaStagione = ft.ElevatedButton(text="Seleziona stagione", on_click=self._controller.handleSelezionaStagione)
 
-        self._txtIntK = ft.TextField(label="Dimensione K")
-        self._btnCerca = ft.ElevatedButton(text="Cerca Dream Team",
-                                           on_click=self._controller.handleCerca)
-        row2 = ft.Row([ft.Container(self._txtIntK, width=250),
-            ft.Container(self._btnCerca, width=250)
+        row1 = ft.Row([
+            self._ddAnno,
+            self._btnSelezionaStagione
         ], alignment=ft.MainAxisAlignment.CENTER)
 
-        self._page.controls.append(row1)
-        self._page.controls.append(row2)
-        self.txt_result = ft.ListView(expand=1, spacing=10, padding=20, auto_scroll=True)
-        self._page.controls.append(self.txt_result)
-        self._page.update()
+        # Dropdown Gara + Bottone Simula Gara
+        self._ddGara = ft.Dropdown(label="Gara", width=250)
 
+        self._btnSimulaGara = ft.ElevatedButton(text="Simula gara", on_click=self._controller.handleSimulaGara)
+
+        row2 = ft.Row([
+            self._ddGara,
+            self._btnSimulaGara
+        ], alignment=ft.MainAxisAlignment.CENTER)
+
+        # TextFields: Valore P e Valore T
+        self._txtValoreP = ft.TextField(label="Valore P", width=150,   keyboard_type=ft.KeyboardType.NUMBER)
+        self._txtValoreT = ft.TextField(label="Valore T", width=150)
+
+        row3 = ft.Row([
+            self._txtValoreP,
+            self._txtValoreT
+        ], alignment=ft.MainAxisAlignment.CENTER)
+
+        self.txt_result = ft.ListView(expand=1, spacing=10, padding=20, auto_scroll=True)
+
+        # Aggiunta dei componenti alla pagina
+        self._page.controls.extend([row1, row2, row3, self.txt_result])
+        self._page.update()
 
     @property
     def controller(self):
